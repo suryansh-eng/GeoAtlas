@@ -1,0 +1,29 @@
+@import './Login.css';
+
+/* Two columns: first/last name share a row, everything else spans both */
+.signup-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 16px;
+}
+
+.signup-grid .field--full {
+  grid-column: 1 / -1;
+}
+
+/* Short landscape screens (phones on their side): widen the card, pair fields
+   into three rows so nothing needs scrolling */
+@media (max-height: 560px) and (min-width: 600px) {
+  .auth-card--wide {
+    width: min(720px, 100%);
+  }
+
+  .signup-grid .field--full {
+    grid-column: auto;
+  }
+
+  .field input {
+    padding-top: 14px;
+    font-size: 0.95rem;
+  }
+}

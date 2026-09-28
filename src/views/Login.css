@@ -1,0 +1,246 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Fraunces:opsz,wght@9..144,600&display=swap');
+
+/* Full-screen, non-scrollable stage */
+.auth-page {
+  --forest: #1f3d2b;
+  --moss: #5f8f4e;
+  --fern: #a8cf8a;
+  --bark: #5b3f2a;
+  --sand: #e6d5b1;
+  --cream: #f6f1e5;
+  --alert: #ffc2ae;
+
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(10px, 2.5vh, 28px) clamp(10px, 4vw, 28px);
+  overflow: hidden;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: var(--cream);
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.auth-page *,
+.auth-page *::before,
+.auth-page *::after {
+  box-sizing: border-box;
+}
+
+/* Forest-to-bark tint keeps the glass legible over any image */
+.auth-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(155deg, rgba(31, 61, 43, 0.6), rgba(91, 63, 42, 0.5));
+}
+
+/* Glass card */
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: min(440px, 100%);
+  padding: clamp(18px, 3.5vh, 36px) clamp(18px, 5vw, 36px);
+  border: 1.5px solid rgba(246, 241, 229, 0.75);
+  border-radius: 28px;
+  background: rgba(246, 241, 229, 0.08);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  backdrop-filter: blur(14px) saturate(120%);
+  box-shadow: 0 20px 50px rgba(20, 30, 20, 0.35);
+}
+
+.auth-card h1 {
+  margin: 0 0 clamp(8px, 2vh, 20px);
+  text-align: center;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(1.6rem, 4.5vh, 2.2rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* Floating-label underline inputs */
+.field {
+  position: relative;
+  margin-bottom: clamp(14px, 2.6vh, 22px);
+}
+
+.field input {
+  width: 100%;
+  padding: 16px 44px 6px 2px;
+  border: 0;
+  border-bottom: 1.5px solid rgba(246, 241, 229, 0.85);
+  background: transparent;
+  color: var(--cream);
+  font: inherit;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.field input:focus {
+  border-bottom-color: var(--fern);
+}
+
+.field input:-webkit-autofill {
+  -webkit-text-fill-color: var(--cream);
+  transition: background-color 9999s ease-out;
+}
+
+.field label {
+  position: absolute;
+  top: 14px;
+  left: 2px;
+  max-width: calc(100% - 44px);
+  overflow: hidden;
+  color: rgba(246, 241, 229, 0.85);
+  font-size: 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: top 0.18s ease, font-size 0.18s ease, color 0.18s ease;
+}
+
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label {
+  top: 0;
+  color: var(--fern);
+  font-size: 0.75rem;
+}
+
+.field.invalid input {
+  border-bottom-color: var(--alert);
+}
+
+.field-note {
+  position: absolute;
+  top: 100%;
+  left: 2px;
+  margin: 2px 0 0;
+  color: rgba(246, 241, 229, 0.7);
+  font-size: 0.72rem;
+  line-height: 1.15;
+}
+
+.field-note.error {
+  color: var(--alert);
+}
+
+.toggle {
+  position: absolute;
+  top: 12px;
+  right: 0;
+  padding: 2px 4px;
+  border: 0;
+  background: none;
+  color: var(--sand);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+/* Remember me / Forgot password */
+.options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 4px 0 clamp(10px, 2.4vh, 20px);
+  font-size: 0.85rem;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--moss);
+}
+
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--sand);
+  font: inherit;
+  cursor: pointer;
+}
+
+.link-button:hover,
+.switch a:hover {
+  text-decoration: underline;
+}
+
+/* Status + submit */
+.form-status {
+  margin: 0 0 8px;
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+.form-status.error {
+  color: var(--alert);
+}
+
+.form-status.success {
+  color: var(--fern);
+}
+
+.submit {
+  width: 100%;
+  padding: clamp(10px, 1.8vh, 14px);
+  border: 0;
+  border-radius: 10px;
+  background: var(--cream);
+  color: var(--forest);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.submit:hover:not(:disabled) {
+  background: var(--sand);
+}
+
+.submit:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.submit:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.switch {
+  margin: clamp(10px, 2vh, 18px) 0 0;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.switch a {
+  color: var(--sand);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Keyboard focus */
+.auth-page button:focus-visible,
+.auth-page a:focus-visible,
+.check input:focus-visible {
+  outline: 2px solid var(--fern);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-page * {
+    transition: none !important;
+  }
+}
