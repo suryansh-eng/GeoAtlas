@@ -1,54 +1,78 @@
-import {useEffect, useRef, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {signOut} from 'firebase/auth';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import {auth} from '../firebase';
-import {BHUVAN_WMS_URL, BHUVAN_LULC_LAYER} from '../utils/bhuvan';
+import {useEffect, useRef, useState} from 'react'
+import {useNavigate} from 'react-router-dom'
+import {signOut} from 'firebase/auth'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+import {auth} from '../firebase'
+import {BHUVAN_WMS_URL, BHUVAN_LULC_LAYER, LULC_50K_URL, LULC_50K_STATES} from '../utils/bhuvan'
+const ZOOM_SWITCH = 7
 
 const Dashboard = () => {
-  const mapEl = useRef(null);
-  const mapRef = useRef(null);
-  const lulcRef = useRef(null);
-  const [showLulc, setShowLulc] = useState(true);
-  const [opacity, setOpacity] = useState(0.7);
-  const navigate = useNavigate();
+  const mapEl = useRef(null)
+  const mapRef = useRef(null)
+  const coarseRef = useRef(null)
+  const fineRef = useRef(null)
+  const [showLulc, setShowLulc] = useState(true)
+  const [opacity, setOpacity] = useState(0.7)
+  const navigate = useNavigate()
 
   useEffect(() => {
-    const map = L.map(mapEl.current).setView([22.5, 79], 5);
+    const map = L.map(mapEl.current).setView([22.5, 79], 5)
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
       maxZoom: 18
-    }).addTo(map);
+    }).addTo(map)
 
-    lulcRef.current = L.tileLayer.wms(BHUVAN_WMS_URL, {
+    coarseRef.current = L.tileLayer.wms(BHUVAN_WMS_URL, {
       layers: BHUVAN_LULC_LAYER,
       format: 'image/png',
       transparent: true,
       attribution: 'Bhuvan, ISRO/NRSC'
-    }).addTo(map);
+    })
 
-    mapRef.current = map;
-    return () => map.remove();
-  }, []);
+    fineRef.current = L.layerGroup(
+  LULC_50K_STATES.map((state) => L.tileLayer.wms(LULC_50K_URL, {
+    layers: state.layer,
+    format: 'image/png',
+    transparent: true,
+    bounds: state.bounds,
+    attribution: 'Bhuvan, ISRO/NRSC'
+  }))
+)
+
+    mapRef.current = map
+    return () => map.remove()
+  }, [])
 
   useEffect(() => {
-    const map = mapRef.current;
-    const layer = lulcRef.current;
-    if (!map || !layer) return;
-    if (showLulc) layer.addTo(map);
-    else map.removeLayer(layer);
-  }, [showLulc]);
+    const map = mapRef.current
+    const coarse = coarseRef.current
+    const fine = fineRef.current
+    if (!map || !coarse || !fine) return
+
+    const sync = () => {
+      const zoomedIn = map.getZoom() >= ZOOM_SWITCH
+      if (showLulc && !zoomedIn) coarse.addTo(map)
+      else map.removeLayer(coarse)
+      if (showLulc && zoomedIn) fine.addTo(map)
+      else map.removeLayer(fine)
+    }
+
+    sync()
+    map.on('zoomend', sync)
+    return () => map.off('zoomend', sync)
+  }, [showLulc])
 
   useEffect(() => {
-    if (lulcRef.current) lulcRef.current.setOpacity(opacity);
-  }, [opacity]);
+    if (coarseRef.current) coarseRef.current.setOpacity(opacity)
+    if (fineRef.current) fineRef.current.eachLayer((layer) => layer.setOpacity(opacity))
+  }, [opacity])
 
   const handleLogout = async () => {
-    await signOut(auth);
-    navigate('/login');
-  };
+    await signOut(auth)
+    navigate('/login')
+  }
 
   return (
     <div style={{position: 'relative', height: '100vh'}}>
@@ -89,7 +113,7 @@ const Dashboard = () => {
         <button onClick={handleLogout} style={{marginTop: 12}}>Log out</button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard
