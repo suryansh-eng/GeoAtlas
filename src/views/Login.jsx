@@ -1,3 +1,4 @@
+import {useNavigate} from 'react-router-dom'
 import {useState} from 'react'
 import {Link} from 'react-router-dom'
 import {
@@ -13,12 +14,12 @@ import AuthField from '../components/AuthField'
 import bg from '../assets/background_image.png'
 import './Login.css'
 
-const REDIRECT_URL = 'https://bhuvan.nrsc.gov.in/'
 const Login = () => {
   const [values, setValues] = useState({email: '', password: ''})
   const [errors, setErrors] = useState({})
   const [remember, setRemember] = useState(true)
   const [status, setStatus] = useState({type: '', text: ''})
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
@@ -46,8 +47,7 @@ const Login = () => {
     try {
       await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence)
       await signInWithEmailAndPassword(auth, values.email.trim(), values.password)
-      await signInWithEmailAndPassword(auth, values.email.trim(), values.password)
-window.location.assign(REDIRECT_URL)
+navigate('/dashboard')
     } catch (err) {
       setStatus({type: 'error', text: authMessage(err.code)})
     } finally {
